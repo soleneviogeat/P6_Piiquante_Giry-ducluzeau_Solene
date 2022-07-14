@@ -9,7 +9,7 @@ const sauceController = require("../controllers/sauce");
 
 //REQUÊTE POST
 
-router.post("/", sauceController.createSauce);
+
   
   //REQUÊTE GET
 
