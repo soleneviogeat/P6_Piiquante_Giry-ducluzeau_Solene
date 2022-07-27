@@ -105,10 +105,11 @@ exports.likeSauce = (req, res, next) => {
     .then((sauce) => {
         
         if (like === 0) {
-            const isInArray = (element) => element === userId;
-            const indexLike = sauce.usersLiked.findIndex(isInArray)
-            const indexDislike = sauce.usersDisliked.findIndex(isInArray)
-            console.log('indexLike', indexLike);
+        const isInArray = (element) => element === userId;
+        const indexLike = sauce.usersLiked.findIndex(isInArray)
+        const indexDislike = sauce.usersDisliked.findIndex(isInArray)
+        console.log('indexLike', indexLike);
+
             if (indexLike === -1) {
                 console.log('Je viens denlever un dislike', userId)
                 sauce.usersDisliked.splice(indexDislike)
@@ -120,11 +121,13 @@ exports.likeSauce = (req, res, next) => {
                 sauce.likes = sauce.likes - 1
             }
         }
+
         if (like === 1) {
             console.log('Je viens dajouter un like', userId)
             sauce.usersLiked.push(userId)
             sauce.likes = sauce.likes + 1
         }
+
         if (like === -1) {
             console.log('Je viens dajouter un dislike', userId)
             sauce.usersDisliked.push(userId)
@@ -137,5 +140,9 @@ exports.likeSauce = (req, res, next) => {
         .then((sauce) => res.status(200).json({ message: "Sauce likée" }))
         .catch((error) => res.status(500).json({ error }));
     })
+
+    .catch((error) => {
+        res.status(400).json({ error });
+    });
 }
 
