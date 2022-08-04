@@ -1,11 +1,10 @@
 const express = require('express');
 const router = express.Router();
-const auth = require("../middleware/auth");
+const auth = require("../middleware/jsonwebtoken-config");
 const multer = require("../middleware/multer-config")
-//const Sauce = require('../models/sauce');
 const sauceController = require("../controllers/sauce");
 
-//REQUÊTES
+//Routes pour les évènements liés à la gestion des sauces
 
 router.get("/", auth, sauceController.getAllSauces);
 router.post("/", auth, multer, sauceController.createSauce)

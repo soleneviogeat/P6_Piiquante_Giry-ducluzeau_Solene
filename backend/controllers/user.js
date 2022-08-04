@@ -2,6 +2,8 @@ const bcrypt = require("bcrypt")
 const User = require("../models/user");
 const jwt = require('jsonwebtoken');
 
+//Logique métier pour l'inscription d'un utilisateur
+
 exports.signup = (req, res, next) => {
     bcrypt.hash(req.body.password, 10)
    
@@ -13,13 +15,14 @@ exports.signup = (req, res, next) => {
             
             user.save()
                 .then(() => {
-                    res.status(201).json({ message: 'Utilisateur créé !' });
-                    console.log("c")
+                    res.status(201).json({ message: 'Utilisateur créé !' })
                 })
                 .catch(error => res.status(400).json({ error }));
         })
         .catch(error => res.status(500).json({ error: error }));
 };
+
+//Logique métier pour la connexion d'un utilisateur
 
 exports.login = (req, res, next) => {
     User.findOne({ email: req.body.email })
