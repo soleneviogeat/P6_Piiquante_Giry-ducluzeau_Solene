@@ -1,0 +1,3 @@
+[submodule "frontend"]
+	path = frontend
+	url = https://github.com/soleneviogeat/P6_Piiquante_Giry-ducluzeau_Solene.git
