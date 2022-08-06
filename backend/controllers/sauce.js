@@ -37,22 +37,26 @@ exports.modifySauce = (req, res, next) => {
   
     delete sauceObject._userId;
     Sauce.findOne({_id: req.params.id})
-
         .then((sauce) => {
             if (sauce.userId != req.auth.userId) {
                 res.status(403).json({ message : 'Unauthorized request'});
             } else {
-
-                //Remplacement de l'image avant modification par la nouvelle image
-                const filename = sauce.imageUrl.split('/images/')[1];
-                fs.unlinkSync(`images/${filename}`);
-
+                
+                //Gestion de l'image lors de la modification d'une sauce
+                if (req.file) {
+                    const filename = sauce.imageUrl.split('/images/')[1];
+                    if (fs.existsSync(`images/${filename}`)) {
+                        fs.unlinkSync(`images/${filename}`);
+                    } 
+                }
+                  
                 Sauce.updateOne({ _id: req.params.id}, { ...sauceObject, _id: req.params.id})
                 .then(() => res.status(200).json({message : 'Objet modifié!'}))
-                .catch(error => res.status(401).json({ error }));// A VOIR POUR METTRE EN 403 AVEC LOU
-            }
-        })
-        .catch((error) => {
+                .catch(error => res.status(401).json({ error }));
+                }
+            })
+        
+        .catch ((error) => {
             res.status(400).json({ error });
         });
 };
@@ -70,10 +74,9 @@ Sauce.findOne({ _id: req.params.id})
             fs.unlink(`images/${filename}`, () => {
                 Sauce.deleteOne({_id: req.params.id})
                     .then(() => { res.status(200).json({message: 'Objet supprimé !'})})
-                    .catch(error => res.status(401).json({ error }));// A VOIR POUR METTRE EN 403 AVEC LOU
+                    .catch(error => res.status(401).json({ error }));
             });
         }
-        console.log(req.params.id);
     })
     .catch( error => {
         res.status(500).json({ error });
@@ -95,7 +98,6 @@ Sauce.findOne({ _id: req.params.id })
     .then(sauce => res.status(200).json(sauce))
     .catch(error => res.status(404).json({ error }));
 }
-
 
 //Logique métier pour la gestion des likes et dislikes
 
@@ -141,4 +143,5 @@ exports.likeSauce = (req, res, next) => {
         res.status(400).json({ error });
     });
 }
+
 
