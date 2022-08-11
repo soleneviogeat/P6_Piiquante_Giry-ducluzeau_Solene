@@ -108,34 +108,41 @@ exports.likeSauce = (req, res, next) => {
     
     Sauce.findById(sauceId)
     .then((sauce) => {
-        
-        if (like === 0) {
         const likeIsInArray = (element) => element === userId;
         const indexLike = sauce.usersLiked.findIndex(likeIsInArray)
         const indexDislike = sauce.usersDisliked.findIndex(likeIsInArray)
 
-            if (indexLike === -1) {
-                sauce.usersDisliked.splice(indexDislike)
-                sauce.dislikes = sauce.dislikes + 1
-            }
-            else {
-                sauce.usersLiked.splice(indexLike)
-                sauce.likes = sauce.likes - 1
-            }
-        }
-
         if (like === 1) {
-            sauce.usersLiked.push(userId)
-            sauce.likes = sauce.likes + 1
+            if (indexLike === -1) {
+                sauce.usersLiked.push(userId)
+                sauce.likes = sauce.usersLiked.length
+            } else {
+                res.status(403).json({message: 'Unauthorized request'}) 
+            }
         }
 
         if (like === -1) {
-            sauce.usersDisliked.push(userId)
-            sauce.dislikes = sauce.dislikes + 1
+            if (indexDislike === -1) {
+                sauce.usersDisliked.push(userId)
+                sauce.dislikes = sauce.usersDisliked.length
+            } else {
+                res.status(403).json({message: 'Unauthorized request'}) 
+            }
+        }
+
+        if (like === 0) {
+            if (indexLike === -1) {
+                sauce.usersDisliked.splice(indexDislike, 1)
+                sauce.dislikes = sauce.usersDisliked.length
+            }
+            else {
+                sauce.usersLiked.splice(indexLike, 1)
+                sauce.likes = sauce.usersLiked.length
+            }
         }
 
         sauce.save()
-        .then((sauce) => res.status(200).json({ message: "Sauce likée" }))
+        .then((sauce) => res.status(200).json({ message: "Sauce likée / dislikée" }))
         .catch((error) => res.status(500).json({ error }));
     })
 
@@ -143,5 +150,3 @@ exports.likeSauce = (req, res, next) => {
         res.status(400).json({ error });
     });
 }
-
-
